@@ -13,7 +13,7 @@ var close = function(done) {
         config.db.close(function(err, result) {
             config.db = null
             config.mode = null
-            done(err)
+            done(err);
         })
     }
 }
@@ -53,6 +53,6 @@ var createIndexes = function(collectionName, feildname,options,done) {
     return done('Database Not Connected');
 }
 exports.createIndexes = createIndexes;
-exports.config = config;
+exports.dbURL = config.dbURL;
 exports.close = close;
 exports.getConnection = getConnection;

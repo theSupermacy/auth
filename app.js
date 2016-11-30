@@ -9,6 +9,7 @@ var ObjectId = require('mongodb').ObjectId;
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var employee = require('./routes/employee');
 var config = require('./config/config')
 var util = require('./util');
 var app = express();
@@ -28,7 +29,7 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-config.connectDB(config.config.dbURL,function(err,dbConnection){
+config.connectDB(config.dbURL,function(err,dbConnection){
   if(err) console.log('ERROR',err)
   else {
     console.log('Connected to Database');
@@ -36,6 +37,7 @@ config.connectDB(config.config.dbURL,function(err,dbConnection){
 })
 app.use('/', routes);
 app.use('/users', users);
+app.use('/employee', employee);
 
 
 // catch 404 and forward to error handler

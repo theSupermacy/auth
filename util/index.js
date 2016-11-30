@@ -1,2 +1,2 @@
 var util = require('./utility');
-module.exports = util
+module.exports = util;
