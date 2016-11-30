@@ -10,6 +10,7 @@ var ObjectId = require('mongodb').ObjectId;
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var config = require('./config/config')
+var util = require('./util');
 var app = express();
 
 // view engine setup
@@ -30,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 config.connectDB(config.config.dbURL,function(err,dbConnection){
   if(err) console.log('ERROR',err)
   else {
-    console.log('Connected to Database')
+    console.log('Connected to Database');
   }
 })
 app.use('/', routes);
