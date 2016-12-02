@@ -6,10 +6,11 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/:username', function(req, res, next) {
+  const username = req.params['username'];
   const {
-      username,
       token
   } = req.headers;
+  console.log(username, token);
   util.verifyToken(username, token, function(err, data) {
       console.log(err, data);
       if (err) {

@@ -38,7 +38,8 @@ exports.verifyToken = function(username, token, done) {
 
 exports.createMessage = function(status, message, obj) {
   var payload = obj;
-  if(obj.constructor === Array){
+  if(!obj) payload = {};
+  if(payload.constructor === Array){
     payload ={}
     payload.data = obj
   }

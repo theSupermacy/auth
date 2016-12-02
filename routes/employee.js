@@ -42,12 +42,13 @@ router.post('/', function(req, res, next) {
         username,
         token
     } = req.headers;
-    const {
+    var {
         name,
         phone,
         shift
     } = req.body
-
+    if(shift == '') shift = 'Sunday';
+    console.log(req.body,req.headers);
     util.verifyToken(username, token, function(err, data) {
         var message;
         if (err) {
