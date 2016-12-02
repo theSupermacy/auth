@@ -46,7 +46,7 @@ router.post('/', function(req, res, next) {
         name,
         phone,
         shift
-    } = req.body
+    } = req.body;
     if(shift == '') shift = 'Sunday';
     console.log(req.body,req.headers);
     util.verifyToken(username, token, function(err, data) {

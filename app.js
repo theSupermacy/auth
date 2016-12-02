@@ -6,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongodb = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
+var interceptor = require('express-interceptor');
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -13,6 +15,29 @@ var employee = require('./routes/employee');
 var config = require('./config/config')
 var util = require('./util');
 var app = express();
+
+var finalParagraphInterceptor = interceptor(function(req, res){
+  return {
+    // Only HTML responses will be intercepted
+    isInterceptable: function(){
+      return true;
+    },
+    // Appends a paragraph at the end of the response body
+    intercept: function(body, send) {
+      var customTimeout = 0
+      var newResponse = JSON.parse(body);
+      let { TimeOut } = newResponse;
+      if(!TimeOut) TimeOut = 0;
+      setTimeout(function(){
+        send(JSON.stringify(newResponse))
+      }, TimeOut*1000);
+//      send($document.html());
+    }
+  };
+})
+
+
+app.use(finalParagraphInterceptor);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
