@@ -18,14 +18,15 @@ exports.verifyToken = function(username, token, done) {
     var error;
     if (!username || !token ) {
         error = 'Token or Username not present';
-        process.nextTick(function() {
-            return done(error)
-        });
+        return (process.nextTick(function() {
+            done(error);
+        }));
     }
     var dbConnection = config.getConnection();
-    console.log(username,token)
+    console.log(username,token, 'pika pika')
     dbConnection.collection('profile').find({
-      username
+      username,
+      token
     }).toArray(function(err, data) {
       console.log(data,err,'bc')
         if (err)

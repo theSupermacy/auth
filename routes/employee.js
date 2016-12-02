@@ -53,7 +53,7 @@ router.post('/', function(req, res, next) {
         var message;
         if (err) {
             message = util.createMessage(401, 'Unauthorized Access');
-            console.log(err);
+            console.log(err, 'This is');
             return res.send(message);
         }
         var id = util.generateId();
@@ -79,9 +79,6 @@ router.post('/', function(req, res, next) {
         })
     })
 })
-
-
-
 
 router.get('/:name', function(req, res, next) {
   console.log('test')
@@ -125,6 +122,68 @@ router.get('/:name', function(req, res, next) {
         })
 
     })
+})
+
+
+router.put('/',function(req,res,next){
+  const { username, token } = req.headers;
+  let { name, shift, phone, id } = req.body;
+  if (shift == '') shift = 'Monday';
+  var count =0;
+  var message;
+  util.verifyToken(username, token , function(err,data){
+    if(err)
+      {
+        message = util.createMessage(500,'error');
+        return res.send(message);
+      }
+    var dbConnection = config.getConnection();
+    dbConnection.collection('profile').update({
+      username,
+      "employee.id": id
+    },{
+      $set:{
+        "employee.$":{
+          name, shift, phone,id
+        }
+      }
+    }, function(err,data){
+      message = util.createMessage(500);
+      if(data.result.ok)
+        message = util.createMessage(200);
+      return res.send(message)
+    })
+
+  })
+})
+
+router.delete('/',function(req,res,next){
+  const { username, token } = req.headers;
+  let { id } = req.body;
+  util.verifyToken(username, token, function(err,data){
+    if(err)
+      {
+        message = util.createMessage(500,'error');
+        return res.send(message);
+      }
+    var dbConnection = config.getConnection();
+    dbConnection.collection('profile').update({
+      username,
+      "employee.id": id
+    },{
+      $pull:{
+        "employee":{
+          id
+        }
+      }
+    }, function(err,data){
+      console.log(data.result);
+      message = util.createMessage(500);
+      if(data.result.ok)
+        message = util.createMessage(200);
+      return res.send(message)
+    })
+  })
 })
 
 module.exports = router;

@@ -30,7 +30,7 @@ var router = express.Router();
 
 
 
-router.post('/auth', function(req, res, next) {
+router.post('/auth/login', function(req, res, next) {
     var message = {}
     var status, message, error;
     var username = req.body.username;
@@ -53,17 +53,28 @@ router.post('/auth', function(req, res, next) {
             if (err.code == 11000) {
                 db.collection('profile').findOne({
                     username: username
-                }, function(error, data) {
+                },function(error, data) {
+                  console.log(data);
                       if(data){
                         if(data.hash === password)
                         {
+                          if(data.token) token = data.token;
                           message.status = 200;
                           message.message = 'you are Logging in';
-                          message.token = data.token;
+                          message.token = token;
                           message._id = data._id;
                           message.username = data.username;
                           console.log(message,data)
                           res.send(message);
+                          db.collection('profile').update({
+                            username
+                          },{$set : {
+                            token
+                          }},function(err,data){
+                            if(data){
+                              console.log('written to db')
+                            }
+                          })
                           // console.log()
                           return ;
                         }
@@ -99,5 +110,31 @@ router.post('/auth', function(req, res, next) {
         }
     })
 });
+
+router.post('/auth/logout', function(req, res, next) {
+  var { username, token } = req.headers;
+  var message = '';
+  util.verifyToken(username,token, function(err,data){
+    if(err) {
+      console.log(err);
+      message = util.createMessage(500);
+      if(err == 'Unauthorized Access')
+        message = util.createMessage(401)
+      return res.send(message)
+    }
+    var dbConnection =  config.getConnection();
+    dbConnection.collection('profile').update({
+      username,token
+    },{
+      $unset: {token:1}
+    },function(err,data) {
+      message = util.createMessage(200);
+      if(err)
+      message = util.createMessage(500);
+      return res.send(message)
+    })
+
+  })
+})
 
 module.exports = router;
